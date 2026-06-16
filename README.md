@@ -1,11 +1,11 @@
-Handwritten Digit Recognizer
+#  Handwritten Digit Recognizer
 
 A deep learning web app that recognizes handwritten digits (0–9) in real time.  
 Built with **TensorFlow/Keras** for the model and **Streamlit** for the web interface.
 
 ---
 
- Live Demo
+##  Live Demo
 
  **[Try it here](https://jo-baby2006-mnist-digit-recognizer-app.streamlit.app)**
 
@@ -13,7 +13,7 @@ Draw any digit in the canvas → click Predict → see the result instantly!
 
 ---
 
-How It Works
+##  How It Works
 
 ```
 User draws a digit (0–9)
@@ -33,7 +33,7 @@ Predicted digit shown with confidence %
 
 ---
 
- Model Architecture
+##  Model Architecture
 
 A custom Convolutional Neural Network (CNN) trained on the MNIST dataset.
 
@@ -46,7 +46,7 @@ A custom Convolutional Neural Network (CNN) trained on the MNIST dataset.
 | Dense Layer 2 | 128 neurons, ReLU, Dropout 0.3 |
 | Output Layer | 10 neurons, Softmax |
 
- Training Details
+### Training Details
 - **Dataset:** MNIST (60,000 training / 10,000 test images)
 - **Optimizer:** Adam (lr=0.001)
 - **Data Augmentation:** rotation, zoom, shifts
@@ -55,7 +55,7 @@ A custom Convolutional Neural Network (CNN) trained on the MNIST dataset.
 
 ---
 
- Project Structure
+##  Project Structure
 
 ```
 mnist-digit-recognizer/
@@ -67,7 +67,7 @@ mnist-digit-recognizer/
 
 ---
 
- Run Locally
+##  Run Locally
 
 **Step 1 — Clone the repo**
 ```bash
@@ -92,7 +92,7 @@ http://localhost:8501
 
 ---
 
- Dependencies
+##  Dependencies
 
 | Library | Purpose |
 |---|---|
@@ -105,7 +105,7 @@ http://localhost:8501
 
 ---
 
-Tips for Best Results
+##  Tips for Best Results
 
 - Draw the digit **large** and **centered** in the box
 - Use **thick strokes**
@@ -114,7 +114,7 @@ Tips for Best Results
 
 ---
 
- What I Learned
+##  What I Learned
 
 - Image preprocessing (normalization, reshaping)
 - CNN architecture (Conv2D, MaxPooling, BatchNorm, Dropout)
@@ -126,6 +126,3 @@ Tips for Best Results
 ---
 
 
-## 📄 License
-
-MIT License — free to use and modify.
