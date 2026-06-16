@@ -1,5 +1,7 @@
 streamlit
-tensorflow-cpu
+keras
 numpy
 Pillow
 streamlit-drawable-canvas
+h5py
+tf-keras
