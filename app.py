@@ -1,8 +1,12 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-import tf_keras as keras
 from streamlit_drawable_canvas import st_canvas
+import os
+
+os.environ["KERAS_BACKEND"] = "jax"
+
+import keras
 
 st.set_page_config(
     page_title="Handwritten Digit Recognizer",
@@ -18,7 +22,12 @@ def load_model():
     model = keras.models.load_model("best_mnist_model.h5")
     return model
 
-model = load_model()
+try:
+    model = load_model()
+    model_loaded = True
+except Exception as e:
+    model_loaded = False
+    st.error(f"Model loading failed: {e}")
 
 st.subheader("Draw your digit here:")
 
@@ -39,7 +48,7 @@ with col1:
 with col2:
     clear_btn = st.button("🗑️ Clear", use_container_width=True)
 
-if predict_btn and canvas_result.image_data is not None:
+if predict_btn and canvas_result.image_data is not None and model_loaded:
     img = canvas_result.image_data
 
     img_pil = Image.fromarray(img.astype("uint8"), mode="RGBA").convert("L")
@@ -49,8 +58,8 @@ if predict_btn and canvas_result.image_data is not None:
     img_array = img_array.reshape(1, 28, 28, 1)
 
     predictions = model.predict(img_array)[0]
-    predicted_digit = np.argmax(predictions)
-    confidence = np.max(predictions) * 100
+    predicted_digit = int(np.argmax(predictions))
+    confidence = float(np.max(predictions)) * 100
 
     st.divider()
     st.subheader("Prediction Result")
@@ -68,7 +77,7 @@ if predict_btn and canvas_result.image_data is not None:
             st.progress(float(prob), text=f"{bar_label}  {prob*100:.1f}%")
 
     if confidence < 60:
-        st.warning("⚠️ Low confidence — try drawing the digit more clearly in the center of the box.")
+        st.warning("⚠️ Low confidence — try drawing the digit more clearly.")
 
 with st.sidebar:
     st.header("✏️ Tips for best results")
