@@ -19,7 +19,7 @@ st.markdown("Draw a digit (0–9) in the box below and the AI will predict it!")
 
 @st.cache_resource
 def load_model():
-    model = keras.models.load_model("best_mnist_model.h5")
+    model = keras.models.load_model("best_mnist_model.keras")
     return model
 
 try:
