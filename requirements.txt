@@ -1,7 +1,6 @@
 streamlit
-keras
+keras==3.3.3
 numpy
 Pillow
 streamlit-drawable-canvas
-h5py
-tf-keras
+jax[cpu]
