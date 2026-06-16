@@ -1,12 +1,12 @@
+import os
+os.environ["KERAS_BACKEND"] = "jax"
+
 import streamlit as st
 import numpy as np
 from PIL import Image
-from streamlit_drawable_canvas import st_canvas
-import os
-
-os.environ["KERAS_BACKEND"] = "jax"
-
 import keras
+from keras import layers
+from streamlit_drawable_canvas import st_canvas
 
 st.set_page_config(
     page_title="Handwritten Digit Recognizer",
@@ -17,18 +17,59 @@ st.set_page_config(
 st.title("✏️ Handwritten Digit Recognizer")
 st.markdown("Draw a digit (0–9) in the box below and the AI will predict it!")
 
+# ── Rebuild the exact same model architecture ──────────────
 @st.cache_resource
 def load_model():
-    model = keras.models.load_model("best_mnist_model.keras")
+    model = keras.Sequential([
+        layers.Conv2D(32, (3,3), padding='same', input_shape=(28,28,1)),
+        layers.BatchNormalization(),
+        layers.Activation('relu'),
+        layers.Conv2D(32, (3,3), padding='same'),
+        layers.BatchNormalization(),
+        layers.Activation('relu'),
+        layers.MaxPooling2D(2,2),
+        layers.Dropout(0.25),
+
+        layers.Conv2D(64, (3,3), padding='same'),
+        layers.BatchNormalization(),
+        layers.Activation('relu'),
+        layers.Conv2D(64, (3,3), padding='same'),
+        layers.BatchNormalization(),
+        layers.Activation('relu'),
+        layers.MaxPooling2D(2,2),
+        layers.Dropout(0.25),
+
+        layers.Conv2D(128, (3,3), padding='same'),
+        layers.BatchNormalization(),
+        layers.Activation('relu'),
+        layers.MaxPooling2D(2,2),
+        layers.Dropout(0.25),
+
+        layers.Flatten(),
+        layers.Dense(256, activation='relu'),
+        layers.BatchNormalization(),
+        layers.Dropout(0.4),
+        layers.Dense(128, activation='relu'),
+        layers.Dropout(0.3),
+        layers.Dense(10, activation='softmax')
+    ])
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=0.001),
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
+    )
+    model.load_weights("mnist_weights.weights.h5")
     return model
 
 try:
     model = load_model()
     model_loaded = True
+    st.success("✅ Model loaded successfully!")
 except Exception as e:
     model_loaded = False
     st.error(f"Model loading failed: {e}")
 
+# ── Drawing Canvas ─────────────────────────────────────────
 st.subheader("Draw your digit here:")
 
 canvas_result = st_canvas(
@@ -48,6 +89,7 @@ with col1:
 with col2:
     clear_btn = st.button("🗑️ Clear", use_container_width=True)
 
+# ── Prediction ─────────────────────────────────────────────
 if predict_btn and canvas_result.image_data is not None and model_loaded:
     img = canvas_result.image_data
 
@@ -65,7 +107,6 @@ if predict_btn and canvas_result.image_data is not None and model_loaded:
     st.subheader("Prediction Result")
 
     res_col1, res_col2 = st.columns([1, 2])
-
     with res_col1:
         st.metric(label="Predicted Digit", value=str(predicted_digit))
         st.metric(label="Confidence", value=f"{confidence:.1f}%")
@@ -79,6 +120,7 @@ if predict_btn and canvas_result.image_data is not None and model_loaded:
     if confidence < 60:
         st.warning("⚠️ Low confidence — try drawing the digit more clearly.")
 
+# ── Sidebar ────────────────────────────────────────────────
 with st.sidebar:
     st.header("✏️ Tips for best results")
     st.markdown("""
